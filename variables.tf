@@ -36,7 +36,7 @@ variable "publicly_accessible" {
 }
 
 variable "prevent_destroy" {
-  default = true
+  default = "true"
 }
 
 variable "name" {
