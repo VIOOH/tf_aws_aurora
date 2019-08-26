@@ -35,6 +35,10 @@ variable "publicly_accessible" {
   default = "false"
 }
 
+variable "prevent_destroy" {
+  default = true
+}
+
 variable "name" {
   description = "Name for the Redis replication group i.e. cmsCommon"
 }
