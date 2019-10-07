@@ -72,14 +72,14 @@ resource "aws_db_parameter_group" "aurora_parameter_group" {
   description = "Terraform-managed parameter group for ${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
 
   dynamic "parameter" {
-    for_each = [var.db_parameters]
+    for_each = var.db_parameters
     content {
       # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
       # which keys might be set in maps assigned here, so it has
       # produced a comprehensive set here. Consider simplifying
       # this after confirming which keys can be set in practice.
 
-      apply_method = lookup(parameter.value.name, "apply_method", null)
+      apply_method = lookup(parameter.value, "apply_method", null)
       name         = parameter.value.name
       value        = parameter.value.value
     }
@@ -98,14 +98,14 @@ resource "aws_rds_cluster_parameter_group" "aurora_cluster_parameter_group" {
   description = "Terraform-managed cluster parameter group for ${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
 
   dynamic "parameter" {
-    for_each = [var.cluster_parameters]
+    for_each = var.cluster_parameters
     content {
       # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
       # which keys might be set in maps assigned here, so it has
       # produced a comprehensive set here. Consider simplifying
       # this after confirming which keys can be set in practice.
 
-      apply_method = lookup(parameter.value.name, "apply_method", null)
+      apply_method = lookup(parameter.value, "apply_method", null)
       name         = parameter.value.name
       value        = parameter.value.value
     }
