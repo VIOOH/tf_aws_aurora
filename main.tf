@@ -79,7 +79,7 @@ resource "aws_db_parameter_group" "aurora_parameter_group" {
       # produced a comprehensive set here. Consider simplifying
       # this after confirming which keys can be set in practice.
 
-      apply_method = lookup(parameter.value, "apply_method", null)
+      apply_method = lookup(parameter.value.name, "apply_method", null)
       name         = parameter.value.name
       value        = parameter.value.value
     }
@@ -105,7 +105,7 @@ resource "aws_rds_cluster_parameter_group" "aurora_cluster_parameter_group" {
       # produced a comprehensive set here. Consider simplifying
       # this after confirming which keys can be set in practice.
 
-      apply_method = lookup(parameter.value, "apply_method", null)
+      apply_method = lookup(parameter.value.name, "apply_method", null)
       name         = parameter.value.name
       value        = parameter.value.value
     }
