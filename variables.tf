@@ -47,13 +47,21 @@ variable "subnets" {
 
 variable "cluster_parameters" {
   description = "A list of cluster parameter maps to apply"
-  type        = list(string)
+  type        = list(object({
+    name = string
+    value = string
+    apply_method = string
+  }))
   default     = []
 }
 
 variable "db_parameters" {
   description = "A list of db parameter maps to apply"
-  type        = list(string)
+  type        = list(object({
+    name = string
+    value = string
+    apply_method = string
+  }))
   default     = []
 }
 
