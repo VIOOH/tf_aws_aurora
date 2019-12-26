@@ -109,6 +109,10 @@ variable "vpc_id" {
   description = "VPC ID"
 }
 
+variable "ca_cert_identifier" {
+  default = "rds-ca-2019"
+}
+
 variable "tags" {
   description = "tags"
   default     = {}

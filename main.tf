@@ -47,6 +47,7 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   apply_immediately       = var.apply_immediately
   monitoring_role_arn     = aws_iam_role.aurora_instance_role.arn
   monitoring_interval     = "5"
+  ca_cert_identifier      = var.ca_cert_identifier
   tags = merge(
     {
       "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-${count.index}"
