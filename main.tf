@@ -19,6 +19,7 @@ resource "aws_rds_cluster" "aurora" {
   db_subnet_group_name            = aws_db_subnet_group.aurora_subnet_group.id
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_cluster_parameter_group.id
   final_snapshot_identifier       = "final-snapshot-${var.name}-${data.aws_vpc.vpc.tags["Name"]}" # Useful in dev
+  backtrack_window                = var.target_backtrack_window
   tags = merge(
     {
       "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
