@@ -118,3 +118,7 @@ variable "tags" {
   default     = {}
 }
 
+variable "target_backtrack_window" {
+  description = "number seconds for target  backtrack time"
+  default     = "86400"
+}
