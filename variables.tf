@@ -81,6 +81,11 @@ variable "storage_encrypted" {
   default = true
 }
 
+variable "auto_minor_version_upgrade" {
+  default = true
+}
+
+
 variable "apply_immediately" {
   default = false
 }
