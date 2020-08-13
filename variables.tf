@@ -122,3 +122,9 @@ variable "target_backtrack_window" {
   description = "number seconds for target  backtrack time"
   default     = "86400"
 }
+
+variable "partition" {
+  desciption = "aws or aws-cn"
+  default    = "aws"
+  type       = string
+}
