@@ -124,7 +124,7 @@ variable "target_backtrack_window" {
 }
 
 variable "partition" {
-  desciption = "aws or aws-cn"
+  description = "aws or aws-cn"
   default    = "aws"
   type       = string
 }
