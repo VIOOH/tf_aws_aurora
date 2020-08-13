@@ -135,6 +135,6 @@ resource "aws_iam_role" "aurora_instance_role" {
 
 resource "aws_iam_role_policy_attachment" "aurora_policy_rds_monitoring" {
   role       = aws_iam_role.aurora_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+  policy_arn = "arn:aws:iam::${var.partition}:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
