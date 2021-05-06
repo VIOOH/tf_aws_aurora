@@ -118,3 +118,23 @@ variable "target_backtrack_window" {
   description = "number seconds for target  backtrack time"
   default     = "86400"
 }
+
+variable "performance_insights_enabled" {
+  description = "performance insights enabled"
+  default     = false
+}
+
+variable "performance_insights_enabled_rr" {
+  description = "performance insights enabled"
+  default     = false
+}
+
+variable "read_replica_count" {
+  description = "read replica count"
+  default     = 0
+}
+
+variable "read_replica_instance_class" {
+  description = "Instance size for read replica"
+  default     = "db.t2.medium"
+}
