@@ -49,9 +49,33 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   monitoring_role_arn     = aws_iam_role.aurora_instance_role.arn
   monitoring_interval     = "5"
   ca_cert_identifier      = var.ca_cert_identifier
+  performance_insights_enabled = var.performance_insights_enabled
   tags = merge(
     {
       "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-${count.index}"
+    },
+    var.tags,
+  )
+}
+
+resource "aws_rds_cluster_instance" "aurora_instance_read_replica" {
+  count                   = var.read_replica_count
+  identifier              = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-read-replica-${count.index}"
+  engine                  = var.engine
+  #engine_version          = var.engine_version
+  cluster_identifier      = aws_rds_cluster.aurora.id
+  instance_class          = var.read_replica_instance_class
+  publicly_accessible     = var.publicly_accessible
+  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.id
+  db_parameter_group_name = aws_db_parameter_group.aurora_parameter_group.id
+  apply_immediately       = var.apply_immediately
+  monitoring_role_arn     = aws_iam_role.aurora_instance_role.arn
+  monitoring_interval     = "5"
+  ca_cert_identifier      = var.ca_cert_identifier
+  performance_insights_enabled = var.performance_insights_enabled_rr
+  tags = merge(
+    {
+      "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-read-replica-${count.index}"
     },
     var.tags,
   )
