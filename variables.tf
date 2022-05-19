@@ -97,6 +97,10 @@ variable "engine" {
   default = "aurora"
 }
 
+variable "engine_version" {
+  default = ""
+}
+
 variable "family" {
   default = "aurora5.6"
 }
