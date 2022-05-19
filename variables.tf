@@ -142,3 +142,7 @@ variable "read_replica_instance_class" {
   description = "Instance size for read replica"
   default     = "db.t2.medium"
 }
+
+variable "kms_key_id" {
+  default = ""
+}
