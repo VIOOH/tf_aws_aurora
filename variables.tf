@@ -138,3 +138,8 @@ variable "read_replica_instance_class" {
   description = "Instance size for read replica"
   default     = "db.t2.medium"
 }
+
+variable "prevent_destroy" {
+  description = "Prevent Destroy of RDS"
+  default     = true
+}

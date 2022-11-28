@@ -31,7 +31,7 @@ resource "aws_rds_cluster" "aurora" {
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
 
   lifecycle {
-    prevent_destroy = "true" # https://www.terraform.io/docs/configuration/resources.html#prevent_destroy
+    prevent_destroy = var.prevent_destroy  # https://www.terraform.io/docs/configuration/resources.html#prevent_destroy
   }
 }
 
