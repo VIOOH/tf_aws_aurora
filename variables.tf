@@ -142,4 +142,5 @@ variable "read_replica_instance_class" {
 variable "prevent_destroy" {
   description = "Prevent Destroy of RDS"
   default     = true
+  type        = bool
 }
