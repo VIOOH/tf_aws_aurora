@@ -21,3 +21,13 @@ output "cluster_arn" {
 output "aurora_kms_key" {
   value = aws_kms_key.aurora.arn
 }
+
+output "cluster_master_user_secret" {
+  description = "The generated database master user secret when `manage_master_user_password` is set to `true`"
+  value       = try(aws_rds_cluster.aurora.master_user_secret, null)
+}
+
+output "db_cluster_secretsmanager_secret_rotation_enabled" {
+  description = "Specifies whether automatic rotation is enabled for the secret"
+  value       = try(aws_secretsmanager_secret_rotation.master_password[0].rotation_enabled, null)
+}

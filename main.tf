@@ -3,12 +3,14 @@ data "aws_vpc" "vpc" {
 }
 
 resource "aws_rds_cluster" "aurora" {
-  cluster_identifier              = "tf-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
-  availability_zones              = var.azs
-  database_name                   = var.database_name
-  master_username                 = var.master_username
-  master_password                 = var.master_password
-  engine                          = var.engine
+  cluster_identifier            = "tf-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
+  availability_zones            = var.azs
+  database_name                 = var.database_name
+  master_username               = var.master_username
+  manage_master_user_password   = var.manage_master_user_password ? var.manage_master_user_password : null
+  master_user_secret_kms_key_id = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
+  master_password               = !var.manage_master_user_password ? var.master_password : null
+  engine                        = var.engine
   #engine_version                  = var.engine_version
   backup_retention_period         = var.backup_retention_period
   preferred_backup_window         = var.preferred_backup_window
@@ -36,19 +38,19 @@ resource "aws_rds_cluster" "aurora" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
-  count                   = var.cluster_size
-  identifier              = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-${count.index}"
-  engine                  = var.engine
+  count      = var.cluster_size
+  identifier = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-${count.index}"
+  engine     = var.engine
   #engine_version          = var.engine_version
-  cluster_identifier      = aws_rds_cluster.aurora.id
-  instance_class          = var.instance_class
-  publicly_accessible     = var.publicly_accessible
-  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.id
-  db_parameter_group_name = aws_db_parameter_group.aurora_parameter_group.id
-  apply_immediately       = var.apply_immediately
-  monitoring_role_arn     = aws_iam_role.aurora_instance_role.arn
-  monitoring_interval     = "5"
-  ca_cert_identifier      = var.ca_cert_identifier
+  cluster_identifier           = aws_rds_cluster.aurora.id
+  instance_class               = var.instance_class
+  publicly_accessible          = var.publicly_accessible
+  db_subnet_group_name         = aws_db_subnet_group.aurora_subnet_group.id
+  db_parameter_group_name      = aws_db_parameter_group.aurora_parameter_group.id
+  apply_immediately            = var.apply_immediately
+  monitoring_role_arn          = aws_iam_role.aurora_instance_role.arn
+  monitoring_interval          = 5
+  ca_cert_identifier           = var.ca_cert_identifier
   performance_insights_enabled = var.performance_insights_enabled
   tags = merge(
     {
@@ -59,19 +61,19 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
 }
 
 resource "aws_rds_cluster_instance" "aurora_instance_read_replica" {
-  count                   = var.read_replica_count
-  identifier              = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-read-replica-${count.index}"
-  engine                  = var.engine
+  count      = var.read_replica_count
+  identifier = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-read-replica-${count.index}"
+  engine     = var.engine
   #engine_version          = var.engine_version
-  cluster_identifier      = aws_rds_cluster.aurora.id
-  instance_class          = var.read_replica_instance_class
-  publicly_accessible     = var.publicly_accessible
-  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.id
-  db_parameter_group_name = aws_db_parameter_group.aurora_parameter_group.id
-  apply_immediately       = var.apply_immediately
-  monitoring_role_arn     = aws_iam_role.aurora_instance_role.arn
-  monitoring_interval     = "5"
-  ca_cert_identifier      = var.ca_cert_identifier
+  cluster_identifier           = aws_rds_cluster.aurora.id
+  instance_class               = var.read_replica_instance_class
+  publicly_accessible          = var.publicly_accessible
+  db_subnet_group_name         = aws_db_subnet_group.aurora_subnet_group.id
+  db_parameter_group_name      = aws_db_parameter_group.aurora_parameter_group.id
+  apply_immediately            = var.apply_immediately
+  monitoring_role_arn          = aws_iam_role.aurora_instance_role.arn
+  monitoring_interval          = 5
+  ca_cert_identifier           = var.ca_cert_identifier
   performance_insights_enabled = var.performance_insights_enabled_rr
   tags = merge(
     {
@@ -151,9 +153,23 @@ resource "aws_db_option_group" "aurora_option_group" {
   major_engine_version     = var.major_engine_version
 }
 
+data "aws_iam_policy_document" "aurora_instance_monitoring_policy" {
+  statement {
+    sid    = "monitoringAssume"
+    effect = "Allow"
+    actions = [
+      "sts:AssumeRole",
+    ]
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
+}
+
 resource "aws_iam_role" "aurora_instance_role" {
   name               = "tf-role-rds-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
-  assume_role_policy = file("${path.module}/files/iam/assume_role_rds_monitoring.json")
+  assume_role_policy = data.aws_iam_policy_document.aurora_instance_monitoring_policy.json
   path               = "/tf/${var.env}/${var.name}-${data.aws_vpc.vpc.tags["Name"]}/" # edits?
 }
 
@@ -162,3 +178,19 @@ resource "aws_iam_role_policy_attachment" "aurora_policy_rds_monitoring" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
+################################################################################
+# Managed Secret Rotation for master password
+################################################################################
+
+resource "aws_secretsmanager_secret_rotation" "master_password" {
+  count = var.manage_master_user_password && var.manage_master_user_password_rotation ? 1 : 0
+
+  secret_id          = aws_rds_cluster.aurora.master_user_secret[0].secret_arn
+  rotate_immediately = var.master_user_password_rotate_immediately
+
+  rotation_rules {
+    automatically_after_days = var.master_user_password_rotation_automatically_after_days
+    duration                 = var.master_user_password_rotation_duration
+    schedule_expression      = var.master_user_password_rotation_schedule_expression
+  }
+}
