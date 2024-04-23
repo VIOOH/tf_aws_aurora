@@ -11,7 +11,7 @@ resource "aws_rds_cluster" "aurora" {
   master_user_secret_kms_key_id = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
   master_password               = !var.manage_master_user_password ? var.master_password : null
   engine                        = var.engine
-  #engine_version                  = var.engine_version
+  engine_version                  = var.engine_version
   backup_retention_period         = var.backup_retention_period
   preferred_backup_window         = var.preferred_backup_window
   vpc_security_group_ids          = [aws_security_group.aurora_security_group.id]
