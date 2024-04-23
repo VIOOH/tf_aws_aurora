@@ -112,6 +112,12 @@ variable "major_engine_version" {
   type    = string
 }
 
+variable "engine_version" {
+  description = "The engine version to use"
+  type        = string
+  default     = null
+}
+
 variable "engine" {
   default = "aurora"
   type    = string
