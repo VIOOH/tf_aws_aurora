@@ -57,6 +57,18 @@ variable "db_parameters" {
   default     = []
 }
 
+variable "writer_instance_class" {
+  description = "Instance class for the writer instance"
+  type        = string
+  default     = "db.r5.xlarge"
+}
+
+variable "reader_instance_class" {
+  description = "Instance class for the reader instances"
+  type        = string
+  default     = "db.r5.large"
+}
+
 # see aws_rds_cluster documentation for these variables
 variable "database_name" {
 }
