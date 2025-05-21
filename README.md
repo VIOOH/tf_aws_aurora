@@ -1,5 +1,8 @@
 # AWS Aurora Viooh Terraform Module
 
+:warning: :warning: :warning:   
+THIS VERSION OF THE MODULE HAS BEEN MODIFIED FOR COMPATIBILITY WITH AWS PROVIDER v4.
+
 Terraform module for deploying and managing AWS Aurora
 
 This module

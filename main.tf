@@ -7,9 +7,7 @@ resource "aws_rds_cluster" "aurora" {
   availability_zones            = var.azs
   database_name                 = var.database_name
   master_username               = var.master_username
-  manage_master_user_password   = var.manage_master_user_password ? var.manage_master_user_password : null
-  master_user_secret_kms_key_id = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
-  master_password               = !var.manage_master_user_password ? var.master_password : null
+  master_password               = var.master_password
   engine                        = var.engine
   engine_version                  = var.engine_version
   backup_retention_period         = var.backup_retention_period
@@ -176,21 +174,4 @@ resource "aws_iam_role" "aurora_instance_role" {
 resource "aws_iam_role_policy_attachment" "aurora_policy_rds_monitoring" {
   role       = aws_iam_role.aurora_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-}
-
-################################################################################
-# Managed Secret Rotation for master password
-################################################################################
-
-resource "aws_secretsmanager_secret_rotation" "master_password" {
-  count = var.manage_master_user_password && var.manage_master_user_password_rotation ? 1 : 0
-
-  secret_id          = aws_rds_cluster.aurora.master_user_secret[0].secret_arn
-  rotate_immediately = var.master_user_password_rotate_immediately
-
-  rotation_rules {
-    automatically_after_days = var.master_user_password_rotation_automatically_after_days
-    duration                 = var.master_user_password_rotation_duration
-    schedule_expression      = var.master_user_password_rotation_schedule_expression
-  }
 }
