@@ -3,20 +3,21 @@ data "aws_vpc" "vpc" {
 }
 
 resource "aws_rds_cluster" "aurora" {
-  cluster_identifier            = "tf-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
-  availability_zones            = var.azs
-  database_name                 = var.database_name
-  master_username               = var.master_username
-  manage_master_user_password   = var.manage_master_user_password ? var.manage_master_user_password : null
-  master_user_secret_kms_key_id = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
-  master_password               = !var.manage_master_user_password ? var.master_password : null
-  engine                        = var.engine
+  cluster_identifier              = "tf-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
+  availability_zones              = var.azs
+  database_name                   = var.database_name
+  master_username                 = var.master_username
+  manage_master_user_password     = var.manage_master_user_password ? var.manage_master_user_password : null
+  master_user_secret_kms_key_id   = var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
+  master_password                 = !var.manage_master_user_password ? var.master_password : null
+  engine                          = var.engine
   engine_version                  = var.engine_version
   backup_retention_period         = var.backup_retention_period
   preferred_backup_window         = var.preferred_backup_window
   vpc_security_group_ids          = [aws_security_group.aurora_security_group.id]
   storage_encrypted               = var.storage_encrypted
   kms_key_id                      = aws_kms_key.aurora.arn
+  deletion_protection             = var.rds_deletion_protection
   apply_immediately               = var.apply_immediately
   db_subnet_group_name            = aws_db_subnet_group.aurora_subnet_group.id
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_cluster_parameter_group.id

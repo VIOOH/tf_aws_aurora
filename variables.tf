@@ -215,3 +215,9 @@ variable "master_user_secret_kms_key_id" {
   type        = string
   default     = null
 }
+
+variable "rds_deletion_protection" {
+  type        = bool
+  description = "Whether to ebable RDS deletion_protection"
+  default     = true
+}
