@@ -221,3 +221,10 @@ variable "rds_deletion_protection" {
   description = "Whether to ebable RDS deletion_protection"
   default     = true
 }
+
+variable "copy_tags_to_snapshot" {
+  type        = bool
+  description = "Whether to copy all cluster and instance tags to snapshots."
+  default     = false
+  nullable    = false
+}
