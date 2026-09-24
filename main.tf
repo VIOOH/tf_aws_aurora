@@ -23,6 +23,7 @@ resource "aws_rds_cluster" "aurora" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora_cluster_parameter_group.id
   final_snapshot_identifier       = "final-snapshot-${var.name}-${data.aws_vpc.vpc.tags["Name"]}" # Useful in dev
   backtrack_window                = var.target_backtrack_window
+  copy_tags_to_snapshot           = var.copy_tags_to_snapshot
   tags = merge(
     {
       "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}"
@@ -53,6 +54,7 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   monitoring_interval          = 5
   ca_cert_identifier           = var.ca_cert_identifier
   performance_insights_enabled = var.performance_insights_enabled
+  copy_tags_to_snapshot        = var.copy_tags_to_snapshot
   tags = merge(
     {
       "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-${count.index}"
@@ -76,6 +78,7 @@ resource "aws_rds_cluster_instance" "aurora_instance_read_replica" {
   monitoring_interval          = 5
   ca_cert_identifier           = var.ca_cert_identifier
   performance_insights_enabled = var.performance_insights_enabled_rr
+  copy_tags_to_snapshot        = var.copy_tags_to_snapshot
   tags = merge(
     {
       "Name" = "tf-rds-aurora-${var.name}-${data.aws_vpc.vpc.tags["Name"]}-read-replica-${count.index}"
