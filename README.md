@@ -47,6 +47,7 @@ If you do let it manage a password then don't set `master_password` and set `man
 - `preferred_backup_window` - "The daily time range in UTC during which automated backups are created. Default to 01:00-03:00"
 - `instance_class` - "Instance class to use when creating RDS cluster. Defaults to db.t2.medium"
 - `storage_encrypted` - "Defaults to true"
+- `storage_type` - "Cluster storage type: `aurora` (Standard) or `aurora-iopt1` (I/O-Optimized). Defaults to null (no change, AWS default Standard). AWS allows switching to I/O-Optimized only once every 30 days"
 - `apply_immediately` - "Defaults to false"
 - `iam_database_authentication_enabled` - "Whether to enable IAM database authentication. Detaults to false"
 - `engine` - "Name of the db Engine for Aurora mysql 5.7 use aurora-mysql. Defaults to Aurora mysql 5.6"

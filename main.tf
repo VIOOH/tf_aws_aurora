@@ -16,6 +16,7 @@ resource "aws_rds_cluster" "aurora" {
   preferred_backup_window         = var.preferred_backup_window
   vpc_security_group_ids          = [aws_security_group.aurora_security_group.id]
   storage_encrypted               = var.storage_encrypted
+  storage_type                    = var.storage_type
   kms_key_id                      = aws_kms_key.aurora.arn
   deletion_protection             = var.rds_deletion_protection
   apply_immediately               = var.apply_immediately
