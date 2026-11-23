@@ -228,3 +228,14 @@ variable "copy_tags_to_snapshot" {
   default     = false
   nullable    = false
 }
+
+variable "storage_type" {
+  type        = string
+  description = "Aurora cluster storage type: \"aurora\" (Standard) or \"aurora-iopt1\" (I/O-Optimized). Null keeps the current/AWS default (Standard)."
+  default     = null
+
+  validation {
+    condition     = var.storage_type == null ? true : contains(["aurora", "aurora-iopt1"], var.storage_type)
+    error_message = "storage_type must be null, \"aurora\" or \"aurora-iopt1\"."
+  }
+}
