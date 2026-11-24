@@ -239,3 +239,13 @@ variable "storage_type" {
     error_message = "storage_type must be null, \"aurora\" or \"aurora-iopt1\"."
   }
 }
+
+variable "serverlessv2_scaling_configuration" {
+  type = object({
+    min_capacity             = number
+    max_capacity             = number
+    seconds_until_auto_pause = optional(number)
+  })
+  description = "Aurora Serverless v2 capacity range in ACUs. Required when instance_class is db.serverless; leave null for provisioned clusters."
+  default     = null
+}
